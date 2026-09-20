@@ -1083,7 +1083,7 @@ h3 {
   }
 }
 
-@media (max-width: 800px), (hover: none) and (pointer: coarse) {
+@media (hover: none) {
   .earth-image {
     max-height: calc(100svh - 96px)
   }

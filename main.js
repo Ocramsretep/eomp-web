@@ -30,8 +30,8 @@
   const photo = imageFrame?.querySelector('img');
   if (photo) {
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    const hoverPointer = matchMedia('(hover: hover) and (pointer: fine)');
-    const scrollMode = matchMedia('(max-width: 800px), (hover: none) and (pointer: coarse)');
+    const hoverPointer = matchMedia('(hover: hover)');
+    const scrollMode = matchMedia('(hover: none)');
     let angle = 0;
     let animationFrame;
     let scrollFrame;
