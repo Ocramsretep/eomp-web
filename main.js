@@ -31,8 +31,10 @@
   if (photo) {
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     const hoverPointer = matchMedia('(hover: hover) and (pointer: fine)');
+    const scrollMode = matchMedia('(max-width: 800px), (hover: none) and (pointer: coarse)');
     let angle = 0;
     let animationFrame;
+    let scrollFrame;
     let width = imageFrame.clientWidth;
     let height = imageFrame.clientHeight;
 
@@ -40,17 +42,32 @@
       const radians = angle * Math.PI / 180;
       const cos = Math.abs(Math.cos(radians));
       const sin = Math.abs(Math.sin(radians));
-      // A temporary zoom keeps the rectangular photo covering its frame at every angle.
+      // A temporary zoom keeps the photo covering its frame at every angle.
       const scale = width && height ? Math.max(cos + height / width * sin, cos + width / height * sin) : 1;
       photo.style.transform = 'rotate(' + angle + 'deg) scale(' + scale + ')';
     };
-    const rotateTo = target => {
-      cancelAnimationFrame(animationFrame);
-      if (reducedMotion.matches || !hoverPointer.matches) {
-        angle = 0;
-        renderRotation();
-        return;
+    const updateScrollRotation = () => {
+      scrollFrame = undefined;
+      if (!scrollMode.matches || reducedMotion.matches) return;
+      const rect = imageFrame.getBoundingClientRect();
+      const viewport = window.visualViewport;
+      const viewportHeight = viewport?.height ?? window.innerHeight;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      // Start only once the whole frame is visible, with a little breathing room.
+      const startBottom = viewportTop + viewportHeight - 24;
+      const distance = Math.max(160, viewportHeight - rect.height - 48);
+      const progress = Math.max(0, Math.min(1, (startBottom - rect.bottom) / distance));
+      angle = progress * 180;
+      renderRotation();
+    };
+    const scheduleScrollRotation = () => {
+      if (scrollMode.matches && !reducedMotion.matches && scrollFrame === undefined) {
+        scrollFrame = requestAnimationFrame(updateScrollRotation);
       }
+    };
+    const rotateTo = target => {
+      if (scrollMode.matches || !hoverPointer.matches || reducedMotion.matches) return;
+      cancelAnimationFrame(animationFrame);
       const from = angle;
       const started = performance.now();
       const duration = Math.max(180, 1100 * Math.abs(target - from) / 180);
@@ -63,17 +80,36 @@
       };
       animationFrame = requestAnimationFrame(tick);
     };
+    const syncRotationMode = () => {
+      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(scrollFrame);
+      scrollFrame = undefined;
+      if (scrollMode.matches && !reducedMotion.matches) {
+        updateScrollRotation();
+      } else {
+        angle = 0;
+        renderRotation();
+      }
+    };
     imageFrame.addEventListener('pointerenter', event => {
       if (event.pointerType !== 'touch') rotateTo(180);
     });
     imageFrame.addEventListener('pointerleave', () => rotateTo(0));
     imageFrame.addEventListener('pointercancel', () => rotateTo(0));
-    reducedMotion.addEventListener('change', () => rotateTo(0));
-    hoverPointer.addEventListener('change', () => rotateTo(0));
+    window.addEventListener('scroll', scheduleScrollRotation, { passive: true });
+    window.addEventListener('resize', scheduleScrollRotation, { passive: true });
+    window.addEventListener('pageshow', syncRotationMode);
+    window.visualViewport?.addEventListener('resize', scheduleScrollRotation, { passive: true });
+    window.visualViewport?.addEventListener('scroll', scheduleScrollRotation, { passive: true });
+    reducedMotion.addEventListener('change', syncRotationMode);
+    hoverPointer.addEventListener('change', syncRotationMode);
+    scrollMode.addEventListener('change', syncRotationMode);
     new ResizeObserver(() => {
       width = imageFrame.clientWidth;
       height = imageFrame.clientHeight;
-      renderRotation();
+      if (scrollMode.matches && !reducedMotion.matches) updateScrollRotation();
+      else renderRotation();
     }).observe(imageFrame);
+    syncRotationMode();
   }
 })();

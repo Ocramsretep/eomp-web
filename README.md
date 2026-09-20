@@ -18,7 +18,7 @@ For permission enquiries, contact marco@eomp.info.
 - `assets/logo.svg`: web derivative with lettering converted to paths, preserving appearance independently of installed
   fonts.
 - `assets/yukon.jpg`: NASA Yukon Delta satellite image; source and credit in imprint. Cropped for the hero and rotated
-  on hover.
+  on hover or while scrolling on mobile.
 
 
 ## Editorial sources

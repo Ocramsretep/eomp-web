@@ -1083,6 +1083,12 @@ h3 {
   }
 }
 
+@media (max-width: 800px), (hover: none) and (pointer: coarse) {
+  .earth-image {
+    max-height: calc(100svh - 96px)
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto
