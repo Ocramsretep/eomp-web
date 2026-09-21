@@ -634,6 +634,7 @@ h3 {
 .about-portrait {
   margin: 0;
   width: min(100%, 320px);
+  justify-self: center;
   grid-column: 1;
   grid-row: 2;
   align-self: start
