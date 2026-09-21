@@ -598,7 +598,7 @@ h3 {
   aspect-ratio: 4 / 5;
   object-fit: cover;
   object-position: center top;
-  clip-path: polygon(16% 0, 84% 0, 100% 12.8%, 100% 87.2%, 84% 100%, 16% 100%, 0 87.2%, 0 12.8%)
+  border-radius: 48% 48% 2px 2px
 }
 
 .about-copy {
