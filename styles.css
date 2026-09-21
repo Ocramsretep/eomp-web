@@ -1083,10 +1083,8 @@ h3 {
   }
 }
 
-@media (hover: none) {
-  .earth-image {
-    max-height: calc(100svh - 96px)
-  }
+.earth-image[data-rotation-mode=scroll] {
+  max-height: calc(100svh - 96px)
 }
 
 @media (prefers-reduced-motion: reduce) {

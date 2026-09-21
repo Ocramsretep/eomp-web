@@ -30,8 +30,9 @@
   const photo = imageFrame?.querySelector('img');
   if (photo) {
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    const hoverPointer = matchMedia('(hover: hover)');
-    const scrollMode = matchMedia('(hover: none)');
+    const hoverPointer = matchMedia('(any-hover: hover)');
+    let mouseObserved = false;
+    const canHover = () => hoverPointer.matches || mouseObserved;
     let angle = 0;
     let animationFrame;
     let scrollFrame;
@@ -48,7 +49,7 @@
     };
     const updateScrollRotation = () => {
       scrollFrame = undefined;
-      if (!scrollMode.matches || reducedMotion.matches) return;
+      if (canHover() || reducedMotion.matches) return;
       const rect = imageFrame.getBoundingClientRect();
       const viewport = window.visualViewport;
       const viewportHeight = viewport?.height ?? window.innerHeight;
@@ -61,12 +62,12 @@
       renderRotation();
     };
     const scheduleScrollRotation = () => {
-      if (scrollMode.matches && !reducedMotion.matches && scrollFrame === undefined) {
+      if (!canHover() && !reducedMotion.matches && scrollFrame === undefined) {
         scrollFrame = requestAnimationFrame(updateScrollRotation);
       }
     };
     const rotateTo = target => {
-      if (scrollMode.matches || !hoverPointer.matches || reducedMotion.matches) return;
+      if (!canHover() || reducedMotion.matches) return;
       cancelAnimationFrame(animationFrame);
       const from = angle;
       const started = performance.now();
@@ -84,14 +85,26 @@
       cancelAnimationFrame(animationFrame);
       cancelAnimationFrame(scrollFrame);
       scrollFrame = undefined;
-      if (scrollMode.matches && !reducedMotion.matches) {
+      imageFrame.dataset.rotationMode = canHover() ? 'hover' : 'scroll';
+      if (!canHover() && !reducedMotion.matches) {
         updateScrollRotation();
       } else {
         angle = 0;
         renderRotation();
       }
     };
+    // Some desktop browsers report no hover hardware. Real mouse input wins.
+    const observeMouse = event => {
+      if (event.pointerType !== 'mouse' || mouseObserved) return;
+      mouseObserved = true;
+      syncRotationMode();
+      if (imageFrame.contains(event.target)) rotateTo(180);
+    };
+    window.addEventListener('pointerover', observeMouse, { passive: true, capture: true });
+    window.addEventListener('pointermove', observeMouse, { passive: true, capture: true });
+    window.addEventListener('pointerdown', observeMouse, { passive: true, capture: true });
     imageFrame.addEventListener('pointerenter', event => {
+      observeMouse(event);
       if (event.pointerType !== 'touch') rotateTo(180);
     });
     imageFrame.addEventListener('pointerleave', () => rotateTo(0));
@@ -103,11 +116,10 @@
     window.visualViewport?.addEventListener('scroll', scheduleScrollRotation, { passive: true });
     reducedMotion.addEventListener('change', syncRotationMode);
     hoverPointer.addEventListener('change', syncRotationMode);
-    scrollMode.addEventListener('change', syncRotationMode);
     new ResizeObserver(() => {
       width = imageFrame.clientWidth;
       height = imageFrame.clientHeight;
-      if (scrollMode.matches && !reducedMotion.matches) updateScrollRotation();
+      if (!canHover() && !reducedMotion.matches) updateScrollRotation();
       else renderRotation();
     }).observe(imageFrame);
     syncRotationMode();
