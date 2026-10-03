@@ -31,7 +31,7 @@ confirmation.
 - https://www.eomasters.org/about — over 20 years of EO experience.
 - https://www.eomasters.org/post/hello-eo-masters — BC start in 2004, more than 18 years, SNAP leadership, location and
   personal interests.
-- User brief — full-time freelance period and current Software Lead role at SATify. No exact transition dates inferred.
+- User brief — full-time freelance period and current Software Lead role at SATIFY. No exact transition dates inferred.
 - https://www.eomasters.org/imprint — existing public address, phone and contact email
 - https://science.nasa.gov/earth/earth-observatory/yukon-delta-alaska-72762/ — Landsat 7 ETM+, 22 September 2002; NASA
   Earth Observatory / Jesse Allen and Robert Simmon, USGS data.
