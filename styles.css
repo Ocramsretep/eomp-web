@@ -648,7 +648,7 @@ h3 {
 
 .about-portrait {
   margin: 0;
-  width: min(100%, 320px);
+  width: min(90%, 288px);
   justify-self: center;
   grid-column: 1;
   grid-row: 2;
@@ -1047,6 +1047,10 @@ h3 {
   .about-heading, .about-portrait, .about-copy {
     grid-column: auto;
     grid-row: auto
+  }
+
+  .about-portrait {
+    width: min(80%, 256px)
   }
 
   .about-copy {
