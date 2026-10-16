@@ -42,5 +42,4 @@ confirmation.
 - https://www.gesetze-im-internet.de/ddg/__5.html
 - https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng
 
-Public EOMasters company LinkedIn link uses the provided company ID with the administration path removed. Personal
-LinkedIn tracking parameters have been removed.
+Social links use Marco Peters’ LinkedIn profile and the eomp.info Bluesky profile, without tracking parameters.
