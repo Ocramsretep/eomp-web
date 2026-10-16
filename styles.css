@@ -165,12 +165,11 @@ h3 {
 .site-header {
   min-height: 116px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas: "brand navigation actions" "socials . .";
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-areas: "brand socials navigation actions";
   align-items: center;
   justify-content: space-between;
   column-gap: 2rem;
-  row-gap: .25rem;
   padding-block: 20px;
   border-bottom: 1px solid var(--line)
 }
